@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const errorSchema = mongoose.Schema({
+const chatEventLogSchema = mongoose.Schema({
     type: {
         type: String,
         require: true
@@ -13,4 +13,4 @@ const errorSchema = mongoose.Schema({
     timestamps: true
 })
 
-module.exports = mongoose.model('Error', errorSchema);
+module.exports = mongoose.model('ChatEventLog', chatEventLogSchema);

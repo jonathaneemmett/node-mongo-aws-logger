@@ -1,13 +1,16 @@
 'use strict';
 console.log('Loading Chat Log Handler...');
 
+// Only needed for local
+require('dotenv').config();
+
 const {dbConnect} = require('./config/db');
 
 // Init DB
 dbConnect().catch((err) => console.log(err));
 
 // Error Init
-const LogError = require('./model/Error');
+const LogEvent = require('./model/ChatEventLog');
 
 exports.handler = async (event) => {
     let response;
@@ -22,7 +25,7 @@ exports.handler = async (event) => {
             throw new Error('All fields are required, please try again.')
         }
 
-        let error = await LogError.create(body);
+        let error = await LogEvent.create(body);
 
         if(error){
             responseCode = 200;
@@ -38,7 +41,7 @@ exports.handler = async (event) => {
                 headers: {
                     "Content-Type" : "application/json"
                 },
-                body: JSON.stringify(error)
+                body: JSON.stringify(responseBody)
             };
 
             return response;
@@ -64,6 +67,4 @@ exports.handler = async (event) => {
 
         return response;
     }
-
-
 };
