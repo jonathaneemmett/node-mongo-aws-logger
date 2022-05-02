@@ -39,7 +39,9 @@ exports.handler = async (event) => {
             response = {
                 statusCode: responseCode,
                 headers: {
-                    "Content-Type" : "application/json"
+                    "Access-Control-Allow-Headers" : "Content-Type",
+                    "Access-Control-Allow-Origin": "*",
+                    "Access-Control-Allow-Methods": "*"
                 },
                 body: JSON.stringify(responseBody)
             };
@@ -60,7 +62,9 @@ exports.handler = async (event) => {
         response = {
             statusCode: responseCode,
             headers: {
-                "Content-Type" : "application/json"
+                "Access-Control-Allow-Headers" : "Content-Type",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "*"
             },
             body: JSON.stringify(responseBody)
         };

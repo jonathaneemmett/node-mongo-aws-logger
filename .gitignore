@@ -1,4 +1,4 @@
 /node_modules
 .env
-./function.zip
+function.zip
 .idea
