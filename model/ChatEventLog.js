@@ -1,14 +1,28 @@
 const mongoose = require('mongoose');
 
 const chatEventLogSchema = mongoose.Schema({
-    type: {
+    leadID: {
         type: String,
-        require: true
+        required: true
     },
-    message: {
+    department: {
         type: String,
-        require: true
-    }
+    },
+    capturedUrl: {
+        type: String,
+    },
+    events: [
+        {
+            type: {
+                type: String,
+                required: true
+            },
+            message: {
+                type: String,
+                required: true
+            }
+        }
+    ]
 }, {
     timestamps: true
 })
