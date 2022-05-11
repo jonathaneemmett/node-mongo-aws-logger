@@ -19,7 +19,6 @@ exports.handler = async (event) => {
     let responseBody;
     let body;
 
-    console.log(event);
     function isJSON(str){
         try {
             return (JSON.parse(str) && !!str);
@@ -28,6 +27,9 @@ exports.handler = async (event) => {
         }
     }
 
+    /**
+     * @desc Handles from fetch or from postman
+     */
     if(isJSON(event)){
         body = JSON.parse(event);
     } else {
@@ -45,7 +47,11 @@ exports.handler = async (event) => {
 
 
         const log = await LogEvent.findById(id);
-        log.events.push({type, message});
+        let ts = Date.now();
+        let time = new Date(ts).toISOString();
+
+        console.log(time);
+        log.events.push({time, type, message});
         const newLog = await log.save();
         console.log(newLog);
 
@@ -54,7 +60,7 @@ exports.handler = async (event) => {
 
             responseBody = {
                 ok: Boolean(true),
-                log: newLog.id
+                log: newLog._id
             };
 
             response = {
@@ -64,34 +70,10 @@ exports.handler = async (event) => {
                     "Access-Control-Allow-Origin": "*",
                     "Access-Control-Allow-Methods": "*"
                 },
-                body: JSON.stringify(newLog)
+                body: JSON.stringify(responseBody)
             };
-            console.log(response);
+            console.log("Response: ", response);
             return response;
-            // console.log(id, log)
-            // // Log was found, update
-            // log.events.push(type, message);
-
-            // let res = await log.save();
-
-            // responseCode = 200;
-
-            // responseBody = {
-            //     ok: Boolean(true),
-            //     log: res.id
-            // };
-
-            // response = {
-            //     statusCode: responseCode,
-            //     headers: {
-            //         "Access-Control-Allow-Headers" : "Content-Type",
-            //         "Access-Control-Allow-Origin": "*",
-            //         "Access-Control-Allow-Methods": "*"
-            //     },
-            //     body: JSON.stringify(responseBody)
-            // };
-
-            // return response;
         } else {
             responseCode = 401;
             throw new Error(`That chat log: ${id} does not exist`)

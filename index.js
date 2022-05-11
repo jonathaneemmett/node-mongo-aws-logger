@@ -1,5 +1,6 @@
 'use strict';
 console.log('Loading Chat Log Handler...');
+const mongoose = require('mongoose');
 
 // Only needed for local
 require('dotenv').config();
@@ -16,24 +17,50 @@ exports.handler = async (event) => {
     let response;
     let responseCode;
     let responseBody;
+    let body;
 
-    let body = JSON.parse(event.body);
+    function isJSON(str){
+        try {
+            return (JSON.parse(str) && !!str);
+        } catch (e) {
+            return false;
+        }
+    }
+
+    /**
+     * @desc Handles from fetch or from postman
+     */
+    if(isJSON(event)){
+        body = JSON.parse(event);
+    } else {
+        body = event
+    }
+
+
+    const {id, type, message} = body;
 
     try {
-        if(!body.type || !body.message){
+        if(!id || !type || !message){
             responseCode = 400;
             throw new Error('All fields are required, please try again.')
         }
 
-        let error = await LogEvent.create(body);
 
-        if(error){
+        const log = await LogEvent.findById(id);
+        let ts = Date.now();
+        let time = new Date(ts).toISOString();
+
+        console.log(time);
+        log.events.push({time, type, message});
+        const newLog = await log.save();
+        console.log(newLog);
+
+        if(log !== null){
             responseCode = 200;
 
             responseBody = {
                 ok: Boolean(true),
-                message: body.message,
-                type: body.type
+                log: newLog._id
             };
 
             response = {
@@ -45,11 +72,11 @@ exports.handler = async (event) => {
                 },
                 body: JSON.stringify(responseBody)
             };
-
+            console.log("Response: ", response);
             return response;
         } else {
-            responseCode = 400;
-            throw new Error('There was a problem inserting the data into the log.')
+            responseCode = 401;
+            throw new Error(`That chat log: ${id} does not exist`)
         }
     } catch (err) {
 
